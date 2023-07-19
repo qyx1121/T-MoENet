@@ -10,40 +10,20 @@ class MC_Dataset(Dataset):
     def __init__(
         self,
         csv_path,
-        subtitles_path,
         features_path,
         max_feats=10,
         features_dim=768,
         tokenizer=None,
-        use_context=True,
         type_map=None,
         prefix="",
         suffix="",
     ):
         self.data = pd.read_csv(csv_path)
         
-        ##### loads
-        '''
-        self.video_idxs = []
-        tmp = [self.data.columns.to_list()]
-        for i in range(len(self.data)):
-            item = self.data.iloc[i]
-            if item['video_id'] not in self.video_idxs:
-                self.video_idxs.append(item['video_id'])
-                tmp.append(item.tolist())
-        self.data = pd.DataFrame(tmp[1:], columns=tmp[0])
-        '''
-        #####
-
-        if subtitles_path:
-            self.subs = pickle.load(open(subtitles_path, "rb"))
-        else:
-            self.subs = None
         self.features = th.load(features_path)
         self.max_feats = max_feats
         self.features_dim = features_dim
         self.mask = tokenizer.mask_token if tokenizer is not None else None
-        self.use_context = use_context
         mc = 0
         while f"a{mc}" in self.data:
             mc += 1
@@ -64,12 +44,10 @@ class MC_Dataset(Dataset):
         ]
         return " ".join(subs_list).capitalize().strip()
 
-    def _get_text(self, subtitles, answer, mask, question=None):
+    def _get_text(self, answer, mask, question=None):
         text = (
             f"{self.prefix} Question: {question} Is it '{answer}'? {mask}{self.suffix}"
         )
-        if self.use_context:
-            text += f" Subtitles: {subtitles}"
         text = text.strip()
         return text
 
@@ -120,12 +98,6 @@ class MC_Dataset(Dataset):
         if "type" in self.data:
             type = self.data["type"].values[idx]
 
-        # get subs
-        if self.subs:
-            subs = self._get_subtitles(video_id, start, end)
-        else:
-            subs = ""
-
         # get features
         video, video_len = self._get_video(video_id, start, end)
 
@@ -137,7 +109,7 @@ class MC_Dataset(Dataset):
         text = []
         for i in range(self.mc):
             ai = self.data[f"a{i}"].values[idx].capitalize().strip()
-            text.append(self._get_text(subs, ai, self.mask, question))
+            text.append(self._get_text(ai, self.mask, question))
 
         qid = idx
         if "qid" in self.data:
