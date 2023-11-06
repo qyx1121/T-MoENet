@@ -1,28 +1,20 @@
 import argparse
 import os
 
-PRESAVE_DIR = ""
-MODEL_DIR = ""
 DATA_DIR = "/mnt/hdd3/qinyixin/FrozenBilm"
-SSD_DIR = ""
 name2folder = {
     "webvid": "WebVid",
-    "lsmdc": "LSMDC",
     "ivqa": "iVQA",
     "msrvtt": "MSRVTT-QA",
     "msvd": "MSVD-QA",
-    "activitynet": "ActivityNet-QA",
     "tgif": "TGIF-QA",
-    "how2qa": "How2QA",
-    "tvqa": "TVQA",
-    "vqa": "VQA",
     "nextqa": "NEXT-QA",
     "starqa":"STAR-QA"
 }
 
 
 def get_args_parser():
-    parser = argparse.ArgumentParser("Set FrozenBiLM", add_help=False)
+    parser = argparse.ArgumentParser()
 
     # Dataset specific
 
@@ -77,10 +69,6 @@ def get_args_parser():
     parser.add_argument(
         "--ivqa_vocab_path",
         default=os.path.join(DATA_DIR, name2folder["ivqa"], "vocab1000.json"),
-    )
-    parser.add_argument(
-        "--ivqa_subtitles_path",
-        default=os.path.join(DATA_DIR, name2folder["ivqa"], "subtitles.pkl"),
     )
     parser.add_argument(
         "--msrvtt_features_path",
@@ -312,7 +300,7 @@ def get_args_parser():
     )
     parser.add_argument(
         "--presave_dir",
-        default=PRESAVE_DIR,
+        default="",
         help="the actual save_dir is an union of presave_dir and save_dir",
     )
     parser.add_argument("--device", default="cuda", help="device to use")
@@ -395,7 +383,8 @@ def get_args_parser():
     parser.add_argument(    
         "--add_video_feat",
         action="store_true",
-        default=False
+        default=False,
+        help="whether to add video temporal feature"
     )
 
     parser.add_argument(

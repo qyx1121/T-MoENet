@@ -363,7 +363,7 @@ class DebertaV2Output(nn.Module):
         if not self.add_moe and self.ds_factor:
             self.adapter = Adapter(ds_factor, config.hidden_size, dropout=dropout)
         elif self.add_moe:
-            self.moe_layer = MoE(ds_factor=ds_factor, moe_input_size=config.hidden_size, dropout=dropout, num_experts=2, top_k=1, gating=gating)
+            self.moe_layer = MoE(ds_factor=ds_factor, moe_input_size=config.hidden_size, dropout=dropout, num_experts=4, top_k=1, gating=gating)
             #self.adapter = Adapter(ds_factor, config.hidden_size, dropout=dropout)
 
     def forward(self, hidden_states, input_tensor, temporal_factor, train_mode):
