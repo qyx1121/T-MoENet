@@ -5,15 +5,14 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
 
-import math
 from tqdm import tqdm
 import argparse
-from args import get_args_parser
 from datasets.mc_dataset import MC_Dataset, mc_collate_fn
 from collections import OrderedDict
 from model import build_model, get_tokenizer
-from util.misc import get_mask, avg_1d_pool
+from util.misc import get_mask
 import json
+from collections import defaultdict
 
 def main(args):
 
@@ -163,6 +162,15 @@ def main(args):
     
     
     if args.save_result:
+        
+        if data_name == "starqa":
+            submission = defaultdict(list)
+            for k, v in res.items():
+                qtype = k.split("_")[0]
+                submission[qtype].append({"question_id":k, "answer":v['pred']})
+            
+            json.dump(submission, open(osp.join(args.save_dir, "submission.json"), "w"))
+
         for k,v in res.items():
             res[str(k)] = v
         json.dump(res, open(osp.join(args.save_dir, "{}.json".format(data_name)), "w"), indent=2)
