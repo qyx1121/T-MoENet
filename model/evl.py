@@ -286,12 +286,6 @@ class TemporalAttention(nn.Module):
         self.decoder_layers = nn.ModuleList(
                 [TransformerDecoderLayer(in_feature_dim, qkv_dim, num_heads, 2.0, 0.5, add_mask=add_mask) for _ in range(self.num_layers)]
             )
-        
-        '''
-        self.attn = Attention(
-            q_in_dim=in_feature_dim, k_in_dim=in_feature_dim, v_in_dim=in_feature_dim,
-            qk_proj_dim=qkv_dim, v_proj_dim=qkv_dim, num_heads=num_heads, out_dim=in_feature_dim, add_mask=add_mask
-        )'''
 
         self.temporal_pos_embed = nn.Parameter(torch.zeros([max_frames, in_feature_dim]))
         self.norm = nn.LayerNorm(in_feature_dim)
@@ -299,15 +293,10 @@ class TemporalAttention(nn.Module):
     def forward(self, x, video_mask):
         
         x, video_mask = avg_1d_pool(x, self.kernel_size, self.stride, video_mask, return_mask=True)
-        #video_mask = 
 
         x = x + self.temporal_pos_embed.unsqueeze(0)
         for i in range(self.num_layers):
             x = self.decoder_layers[i](x, x, video_mask)
-
-
-        #x_norm = self.norm(x)
-        #x = x + self.attn(x_norm, x_norm, x_norm, video_mask)
         
         return x
     
@@ -345,25 +334,3 @@ def recursive_gumbel_softmax(sim, x, video_mask, topk):
 
     return res, video_mask
  
-
-
-
-
-'''
-net = ConvNet()
-x = torch.randn(1, 10, 768)
-tmp = net(x)
-print("hold on")
-'''
-
-
-
-
-'''
-model = EVLTransformer()
-feat = torch.load("data/MSVD-QA/clipvitl14.pth")[833].unsqueeze(0)
-feat = feat.to(torch.float32)
-feat = model(feat)
-
-print("hold on")
-'''
