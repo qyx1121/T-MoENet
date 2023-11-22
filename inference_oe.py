@@ -69,7 +69,7 @@ def main(args):
         max_feats = cfgs.sample_nums,
     )
 
-    loader = DataLoader(dataset, batch_size = 32, collate_fn=videoqa_collate_fn, shuffle=True)
+    loader = DataLoader(dataset, batch_size = args.batch_size, collate_fn=videoqa_collate_fn, shuffle=True)
     cfgs.n_ans = len(dataset.a2id)
 
     model.n_ans = cfgs.n_ans
@@ -249,6 +249,12 @@ if __name__ == "__main__":
             "--save_dir",
             type=str,
             help="the directory where the inference result files are saved"
+        )
+    
+    parser.add_argument(    
+            "--batch_size",
+            type=int,
+            default=12
         )
     
     args = parser.parse_args()

@@ -20,20 +20,6 @@ class MC_Dataset(Dataset):
         suffix="",
     ):
         self.data = pd.read_csv(csv_path)
-        
-        ##### loads
-        '''
-        self.video_idxs = []
-        tmp = [self.data.columns.to_list()]
-        for i in range(len(self.data)):
-            item = self.data.iloc[i]
-            if item['video_id'] not in self.video_idxs:
-                self.video_idxs.append(item['video_id'])
-                tmp.append(item.tolist())
-        self.data = pd.DataFrame(tmp[1:], columns=tmp[0])
-        '''
-        #####
-
         if subtitles_path:
             self.subs = pickle.load(open(subtitles_path, "rb"))
         else:
@@ -175,19 +161,7 @@ def mc_collate_fn(batch):
 
 def build_mc_dataset(dataset_name, split, args, tokenizer):
     type_map = None
-    if dataset_name == "how2qa":
-        if split == "train":
-            csv_path = args.how2qa_train_csv_path
-        elif split == "val":
-            csv_path = args.how2qa_val_csv_path
-        elif split == "test":
-            csv_path = args.how2qa_val_csv_path  # eval on val public
-        else:
-            raise NotImplementedError
-        subtitles_path = args.how2qa_subtitles_path
-        features_path = args.how2qa_features_path
-    
-    elif dataset_name == "nextqa":
+    if dataset_name == "nextqa":
         if split == "train":
             csv_path = args.nextqa_train_csv_path
         elif split == "val":
@@ -226,16 +200,7 @@ def build_mc_dataset(dataset_name, split, args, tokenizer):
     else:
         raise NotImplementedError
     
-    
-    if 't5' in args.model_name:
-        return BlipDataset(
-            csv_path=csv_path,
-            features_path=features_path,
-            max_feats=args.max_feats,
-            features_dim=args.features_dim
-        )
-    
-    
+        
     return MC_Dataset(
         csv_path=csv_path,
         subtitles_path=subtitles_path,

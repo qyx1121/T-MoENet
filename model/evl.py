@@ -141,19 +141,17 @@ class EVLDecoder(nn.Module):
 
     def __init__(
         self,
-        num_frames: int = 8,
-        spatial_size: Tuple[int, int] = (14, 14),
-        num_layers: int = 4,
-        in_feature_dim: int = 768,
-        qkv_dim: int = 768,
-        num_heads: int = 12,
-        mlp_factor: float = 4.0,
-        enable_temporal_conv: bool = True,
-        enable_temporal_pos_embed: bool = True,
-        enable_temporal_cross_attention: bool = False,
-        mlp_dropout: float = 0.5,
-        add_vid_feat: bool = False,
-        add_mask: bool = False,
+        num_frames = 8,
+        num_layers = 4,
+        in_feature_dim = 768,
+        qkv_dim = 768,
+        num_heads = 12,
+        mlp_factor = 4.0,
+        enable_temporal_conv = True,
+        enable_temporal_pos_embed = True,
+        mlp_dropout = 0.5,
+        add_vid_feat = False,
+        add_mask = False,
     ):
         super().__init__()
 
@@ -213,29 +211,27 @@ class EVLTransformer(nn.Module):
 
     def __init__(
         self,
-        num_frames: int = 8,
-        decoder_num_layers: int = 2,
-        decoder_qkv_dim: int = 768,
-        decoder_num_heads: int = 16,
-        decoder_mlp_factor: float = 4.0,
-        enable_temporal_conv: bool = True,
-        enable_temporal_pos_embed: bool = True,
-        enable_temporal_cross_attention: bool = False,
-        decoder_mlp_dropout: float = 0.5,
-        add_video_feat: bool = False,
-        output_dim: int = 1536,
-        add_mask: bool = False
+        num_frames= 8,
+        decoder_num_layers = 2,
+        decoder_qkv_dim = 768,
+        decoder_num_heads = 16,
+        decoder_mlp_factor = 4.0,
+        enable_temporal_conv = True,
+        enable_temporal_pos_embed = True,
+        decoder_mlp_dropout = 0.5,
+        add_video_feat = False,
+        output_dim = 1536,
+        backbone_feature_dim = 768,
+        add_mask = False
     ):
         super().__init__()
 
         self.decoder_num_layers = decoder_num_layers
 
-        backbone_feature_dim = 768
-        backbone_spatial_size = (16, 16)
+        
 
         self.decoder = EVLDecoder(
             num_frames=num_frames,
-            spatial_size=backbone_spatial_size,
             num_layers=decoder_num_layers,
             in_feature_dim=backbone_feature_dim,
             qkv_dim=decoder_qkv_dim,
@@ -243,7 +239,6 @@ class EVLTransformer(nn.Module):
             mlp_factor=decoder_mlp_factor,
             enable_temporal_conv=enable_temporal_conv,
             enable_temporal_pos_embed=enable_temporal_pos_embed,
-            enable_temporal_cross_attention=enable_temporal_cross_attention,
             mlp_dropout=decoder_mlp_dropout,
             add_vid_feat = add_video_feat,
             add_mask=add_mask
@@ -263,41 +258,6 @@ class EVLTransformer(nn.Module):
             #x = self.dropout(x)
             x = self.proj(x)
 
-        return x
-
-class TemporalAttention(nn.Module):
-    def __init__(
-        self,
-        in_feature_dim: int = 768,
-        qkv_dim: int = 768,
-        num_heads: int = 8,
-        max_frames: int = 40,
-        stride: int = 4,
-        kernel_size: int = 4,
-        add_mask: bool = True,
-    ):
-        super().__init__()
-        
-        self.num_layers = 2
-        self.kernel_size = kernel_size
-        self.stride = stride
-        max_frames = (max_frames - self.kernel_size) // self.stride + 1
-        
-        self.decoder_layers = nn.ModuleList(
-                [TransformerDecoderLayer(in_feature_dim, qkv_dim, num_heads, 2.0, 0.5, add_mask=add_mask) for _ in range(self.num_layers)]
-            )
-
-        self.temporal_pos_embed = nn.Parameter(torch.zeros([max_frames, in_feature_dim]))
-        self.norm = nn.LayerNorm(in_feature_dim)
-    
-    def forward(self, x, video_mask):
-        
-        x, video_mask = avg_1d_pool(x, self.kernel_size, self.stride, video_mask, return_mask=True)
-
-        x = x + self.temporal_pos_embed.unsqueeze(0)
-        for i in range(self.num_layers):
-            x = self.decoder_layers[i](x, x, video_mask)
-        
         return x
     
 def recursive_gumbel_softmax(sim, x, video_mask, topk):

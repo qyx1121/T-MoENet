@@ -29,8 +29,8 @@ from transformers.activations import ACT2FN
 from transformers.modeling_outputs import ModelOutput
 
 from transformers.modeling_utils import PreTrainedModel
-from transformers import DebertaV2Config, DebertaV2ForSequenceClassification
-from model.evl import EVLTransformer, TemporalAttention, recursive_gumbel_softmax
+from transformers import DebertaV2Config
+from model.evl import EVLTransformer
 
 _CONFIG_FOR_DOC = "DebertaV2Config"
 _TOKENIZER_FOR_DOC = "DebertaV2Tokenizer"
@@ -1091,9 +1091,12 @@ class DebertaV2Embeddings(nn.Module):
         if self.features_dim:
             self.linear_video = nn.Linear(features_dim, config.hidden_size)
             if self.add_video_feat:
-                self.evl = EVLTransformer(10, decoder_num_layers=1, 
-                                          decoder_qkv_dim=768, add_video_feat=self.add_video_feat,
-                                          add_mask=True)
+                self.evl = EVLTransformer(num_frames=10, 
+                                          decoder_num_layers=1, 
+                                          decoder_qkv_dim=768, 
+                                          add_video_feat=self.add_video_feat,
+                                          add_mask=True
+                                          )
             #self.evl = ConvNet()
 
     def get_video_embedding(self, video, video_mask):
@@ -1463,12 +1466,6 @@ class DebertaV2ForMaskedLM(DebertaV2PreTrainedModel):
         :param freeze_last: whether to freeze or not the answer embedding module
         """
         super().__init__(config)
-
-        
-        self.add_temporal_trans = add_temporal_trans
-        if add_temporal_trans:
-            self.temporal_trans = TemporalAttention()
-            #self.text_encoder.eval()
 
         self.deberta = DebertaV2Model(
             config,

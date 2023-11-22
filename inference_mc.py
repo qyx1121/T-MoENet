@@ -45,7 +45,7 @@ def main(args):
         max_feats=cfg.sample_nums
     )
     
-    loader = DataLoader(dataset, batch_size = 12, collate_fn=mc_collate_fn, shuffle=False)
+    loader = DataLoader(dataset, batch_size = args.batch_size, collate_fn=mc_collate_fn, shuffle=False)
 
     tok_yes = torch.tensor(
                     tokenizer(
@@ -207,6 +207,12 @@ if __name__ == "__main__":
             "--save_dir",
             type=str,
             help="the directory where the inference result files are saved"
+        )
+    
+    parser.add_argument(    
+            "--batch_size",
+            type=int,
+            default=12
         )
     
     args = parser.parse_args()

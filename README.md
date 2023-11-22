@@ -12,6 +12,7 @@ python inference_oe.py --dataset_path <dataset root>/test.csv \
 --feat_path <datset root>/clipvitl14.pth \
 --vocab_path <dataset root>/vocab1000.json \
 --model_path <pretrained checkpoint>
+--batch_size 12
 ```
 
 
@@ -22,6 +23,7 @@ python inference_mc.py --dataset_path <dataset root>/test.csv \
 --feat_path <datset root>/clipvitl14.pth \
 --model_path <pretrained checkpoint> \
 --save_result --save_dir <the directory to save the resulting file>
+--batch_size 12
 ```
 
 ## Train
