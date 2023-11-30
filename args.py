@@ -1,25 +1,33 @@
 import argparse
 import os
 
-DATA_DIR = "/mnt/hdd3/qinyixin/FrozenBilm"
+PRESAVE_DIR = ""
+MODEL_DIR = ""
+DATA_DIR = "/mnt/hdd1/qinyixin/T-MoENet/data"
+SSD_DIR = ""
 name2folder = {
     "webvid": "WebVid",
+    "lsmdc": "LSMDC",
     "ivqa": "iVQA",
     "msrvtt": "MSRVTT-QA",
     "msvd": "MSVD-QA",
+    "activitynet": "ActivityNet-QA",
     "tgif": "TGIF-QA",
+    "how2qa": "How2QA",
+    "tvqa": "TVQA",
+    "vqa": "VQA",
     "nextqa": "NEXT-QA",
     "starqa":"STAR-QA"
 }
 
 
 def get_args_parser():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser("Set FrozenBiLM", add_help=False)
 
     # Dataset specific
 
     parser.add_argument(    
-        "--local_rank",
+        "--local-rank",
         type=int,
         default=-1,
     )
@@ -43,11 +51,11 @@ def get_args_parser():
     parser.add_argument(
         "--webvid_train_csv_path",
         #default=os.path.join(DATA_DIR, name2folder["webvid"], "train_captions.csv"),
-        default="/home/qinyixin/workspace/Frozenbilm/data/exp_2/train_2m.csv"
+        default="/home/qinyixin/workspace/TgMoE/Frozenbilm/data/exp_2/train_2m.csv"
     )
     parser.add_argument(
         "--webvid_val_csv_path",
-        default="/home/qinyixin/workspace/Frozenbilm/data/exp_2/val_2m.csv",
+        default="/home/qinyixin/workspace/TgMoE/Frozenbilm/data/exp_2/val_2m.csv",
     )
 
     parser.add_argument(
@@ -71,6 +79,10 @@ def get_args_parser():
         default=os.path.join(DATA_DIR, name2folder["ivqa"], "vocab1000.json"),
     )
     parser.add_argument(
+        "--ivqa_subtitles_path",
+        default=os.path.join(DATA_DIR, name2folder["ivqa"], "subtitles.pkl"),
+    )
+    parser.add_argument(
         "--msrvtt_features_path",
         default=os.path.join(DATA_DIR, name2folder["msrvtt"], "clipvitl14.pth"),
     )
@@ -89,6 +101,10 @@ def get_args_parser():
     parser.add_argument(
         "--msrvtt_vocab_path",
         default=os.path.join(DATA_DIR, name2folder["msrvtt"], "vocab1000.json"),
+    )
+    parser.add_argument(
+        "--msrvtt_subtitles_path",
+        default=os.path.join(DATA_DIR, name2folder["msrvtt"], "subtitles.pkl"),
     )
     parser.add_argument(
         "--msvd_features_path",
@@ -111,6 +127,34 @@ def get_args_parser():
         default=os.path.join(DATA_DIR, name2folder["msvd"], "vocab1000.json"),
     )
     parser.add_argument(
+        "--msvd_subtitles_path",
+        default=os.path.join(DATA_DIR, name2folder["msvd"], "subtitles.pkl"),
+    )
+    parser.add_argument(
+        "--activitynet_features_path",
+        default=os.path.join(DATA_DIR, name2folder["activitynet"], "clipvitl14.pth"),
+    )
+    parser.add_argument(
+        "--activitynet_train_csv_path",
+        default=os.path.join(DATA_DIR, name2folder["activitynet"], "train.csv"),
+    )
+    parser.add_argument(
+        "--activitynet_val_csv_path",
+        default=os.path.join(DATA_DIR, name2folder["activitynet"], "val.csv"),
+    )
+    parser.add_argument(
+        "--activitynet_test_csv_path",
+        default=os.path.join(DATA_DIR, name2folder["activitynet"], "test.csv"),
+    )
+    parser.add_argument(
+        "--activitynet_vocab_path",
+        default=os.path.join(DATA_DIR, name2folder["activitynet"], "vocab1000.json"),
+    )
+    parser.add_argument(
+        "--activitynet_subtitles_path",
+        default=os.path.join(DATA_DIR, name2folder["activitynet"], "subtitles.pkl"),
+    )
+    parser.add_argument(
         "--tgif_features_path",
         default=os.path.join(DATA_DIR, name2folder["tgif"], "clipvitl14.pth"),
     )
@@ -127,6 +171,58 @@ def get_args_parser():
         default=os.path.join(DATA_DIR, name2folder["tgif"], "vocab1000.json"),
     )
     parser.add_argument(
+        "--how2qa_features_path",
+        default=os.path.join(DATA_DIR, name2folder["how2qa"], "clipvitl14.pth"),
+    )
+    parser.add_argument(
+        "--how2qa_train_csv_path",
+        default=os.path.join(DATA_DIR, name2folder["how2qa"], "train.csv"),
+    )
+    parser.add_argument(
+        "--how2qa_val_csv_path",
+        default=os.path.join(DATA_DIR, name2folder["how2qa"], "val.csv"),
+    )
+    parser.add_argument(
+        "--how2qa_subtitles_path",
+        default=os.path.join(DATA_DIR, name2folder["how2qa"], "subtitles.pkl"),
+    )
+    parser.add_argument(
+        "--tvqa_features_path",
+        default=os.path.join(DATA_DIR, name2folder["tvqa"], "clipvitl14.pth"),
+    )
+    parser.add_argument(
+        "--tvqa_train_csv_path",
+        default=os.path.join(DATA_DIR, name2folder["tvqa"], "train.csv"),
+    )
+    parser.add_argument(
+        "--tvqa_val_csv_path",
+        default=os.path.join(DATA_DIR, name2folder["tvqa"], "val.csv"),
+    )
+    parser.add_argument(
+        "--tvqa_test_csv_path",
+        default=os.path.join(DATA_DIR, name2folder["tvqa"], "val.csv"),
+    )
+    parser.add_argument(
+        "--tvqa_subtitles_path",
+        default=os.path.join(DATA_DIR, name2folder["tvqa"], "subtitles.pkl"),
+    )
+    parser.add_argument(
+        "--vqa_features_path",
+        default=os.path.join(DATA_DIR, name2folder["vqa"], "clipvitl14.pth"),
+    )
+    parser.add_argument(
+        "--vqa_train_pkl_path",
+        default=os.path.join(DATA_DIR, name2folder["vqa"], "train_list.pkl"),
+    )
+    parser.add_argument(
+        "--vqa_val_pkl_path",
+        default=os.path.join(DATA_DIR, name2folder["vqa"], "val_list.csv"),
+    )
+    parser.add_argument(
+        "--vqa_vocab_path",
+        default=os.path.join(DATA_DIR, name2folder["vqa"], "vocab1000.json"),
+    )
+    parser.add_argument(
         "--nextqa_features_path",
         default=os.path.join(DATA_DIR, name2folder["nextqa"], "clipvitl14.pth"),
     )
@@ -138,6 +234,11 @@ def get_args_parser():
         "--nextqa_val_csv_path",
         default=os.path.join(DATA_DIR, name2folder["nextqa"], "val.csv"),
     )
+    parser.add_argument(
+        "--nextqa_subtitles_path",
+        default=os.path.join(DATA_DIR, name2folder["nextqa"], "subtitles.pkl"),
+    )
+    
     parser.add_argument(
         "--starqa_features_path",
         default=os.path.join(DATA_DIR, name2folder["starqa"], "clipvitl14.pth"),
@@ -154,6 +255,7 @@ def get_args_parser():
         "--starqa_test_csv_path",
         default=os.path.join(DATA_DIR, name2folder["starqa"], "test.csv"),
     )
+
 
     # Training hyper-parameters
     parser.add_argument(
@@ -231,12 +333,7 @@ def get_args_parser():
     )
     parser.add_argument(
         "--model_name",
-        default="microsoft/deberta-v2-xlarge",
-        choices=(
-            "bert-large-uncased",
-            "deberta-v2-xlarge",
-            "roberta-large",
-        ),
+        default="microsoft/deberta-v2-xlarge"
     )
     parser.add_argument(
         "--ds_factor_attn",
@@ -300,7 +397,7 @@ def get_args_parser():
     )
     parser.add_argument(
         "--presave_dir",
-        default="",
+        default=PRESAVE_DIR,
         help="the actual save_dir is an union of presave_dir and save_dir",
     )
     parser.add_argument("--device", default="cuda", help="device to use")
@@ -383,14 +480,30 @@ def get_args_parser():
     parser.add_argument(    
         "--add_video_feat",
         action="store_true",
-        default=False,
-        help="whether to add video temporal feature"
+        default=False
+    )
+
+    parser.add_argument(    
+        "--add_temporal_trans",
+        action="store_true",
+        default=False
+    )
+
+    parser.add_argument(    
+        "--add_webvid",
+        action="store_true",
+        default=False
     )
 
     parser.add_argument(
         "--sample_nums",
         type=int,
         default=10
+    )
+
+    parser.add_argument(
+        "--freeze_backbone",
+        action="store_true"
     )
     # Demo
     parser.add_argument(
@@ -404,6 +517,12 @@ def get_args_parser():
         default="",
         type=str,
         help="path to a video example for demo",
+    )
+
+    parser.add_argument(
+        "--few_shot",
+        type=int,
+        default=0
     )
 
     return parser
