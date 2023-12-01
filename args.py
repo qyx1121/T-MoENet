@@ -56,7 +56,6 @@ def get_args_parser():
         "--webvid_val_csv_path",
         default=os.path.join(DATA_DIR, name2folder["webvid"], "val_2m.csv"),
     )
-
     parser.add_argument(
         "--ivqa_features_path",
         default=os.path.join(DATA_DIR, name2folder["ivqa"], "clipvitl14.pth"),
@@ -517,5 +516,4 @@ def get_args_parser():
         type=int,
         default=0
     )
-
     return parser

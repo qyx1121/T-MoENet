@@ -371,15 +371,6 @@ class DebertaV2Output(nn.Module):
         if not self.add_moe and self.ds_factor:
             hidden_states = self.adapter(hidden_states)
         elif self.add_moe:
-            ####
-            '''
-            hidden_states_t = hidden_states[:, :11, :]
-            hidden_states_l = hidden_states[:, 11: ,:]
-            hidden_states_t, loss_moe = self.moe_layer(temporal_factor, hidden_states_t, train=train_mode)
-            hidden_states_l = self.adapter(hidden_states_l)
-            hidden_states = torch.cat((hidden_states_t, hidden_states_l), dim = 1)
-            '''
-            ###
             hidden_states, loss_moe, load = self.moe_layer(temporal_factor, hidden_states, train=train_mode)
         hidden_states = self.dropout(hidden_states)
         hidden_states = self.LayerNorm(hidden_states + input_tensor)
@@ -403,9 +394,6 @@ class DebertaV2Layer(nn.Module):
         super().__init__()
         self.layer_id = layer_id
         self.add_moe = False
-        
-        #if layer_id >= config.num_hidden_layers - 2:
-        #    self.add_moe = True
         
         if layer_id < 2:
             self.add_moe = True

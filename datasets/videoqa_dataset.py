@@ -68,15 +68,12 @@ class VideoQA_Dataset(Dataset):
         text = text.strip()
         return text
 
-    def _get_video(self, video_id, start, end):
+    def _get_video(self, video_id):
         if video_id not in self.features:
             print(video_id)
             video = th.zeros(1, self.features_dim)
         else:
-            if start is not None and not math.isnan(start):
-                video = self.features[video_id][math.floor(start) : math.ceil(end) + 1].float()
-            else:
-                video = self.features[video_id].float()
+            video = self.features[video_id].float()
         if len(video) > self.max_feats:
             sampled = []
             for j in range(self.max_feats):
@@ -96,7 +93,7 @@ class VideoQA_Dataset(Dataset):
     def __getitem__(self, idx):
         # get question
         question = self.data["question"].values[idx].capitalize().strip()
-        if question[-1] != "?" and not self.fib:
+        if question[-1] != "?":
             question = str(question) + "?"
         type = 0
         if "type" in self.data:
@@ -139,8 +136,7 @@ class VideoQA_Dataset(Dataset):
         if "start" in self.data.columns:
             start = self.data["start"].values[idx]
             end = self.data["end"].values[idx]
-        video, video_len = self._get_video(video_id, start, end)
-
+        video, video_len = self._get_video(video_id)
         return {
             "video_id": video_id,
             "video": video,
@@ -221,6 +217,7 @@ def build_videoqa_dataset(dataset_name, split, args, tokenizer):
             raise NotImplementedError
         features_path = args.ivqa_features_path
         vocab_path = args.ivqa_vocab_path
+        type_map = None
     
     elif dataset_name == "tgif":
         if split == "train":

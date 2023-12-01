@@ -191,7 +191,6 @@ class MoE(nn.Module):
         self.num_experts = num_experts
         self.input_size = moe_input_size
         self.k = top_k
-
         # instantiate experts
         self.gating = gating
         self.experts = nn.ModuleList([Adapter(ds_factor, moe_input_size, dropout=dropout) for i in range(self.num_experts)])
@@ -201,7 +200,6 @@ class MoE(nn.Module):
 
         if self.routing != 'random':
             if gating == 'linear':
-                #self.w_gate = nn.Linear(self.input_size, self.num_experts, bias=False)
                 self.w_gate = nn.Parameter(torch.zeros(self.input_size, num_experts), requires_grad=True)
             elif gating == 'cosine':
                 self.w_gate = CosineTopKGate(self.input_size, self.num_experts)
