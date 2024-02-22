@@ -1,5 +1,5 @@
 # T-MoENet
-This is the repository for our work _Temporal-guided Mixture-of-Experts for Zero-Shot Video Question Answering (submitted to TMM)_.
+This is the repository for our work _Temporal-guided Mixture-of-Experts for Zero-Shot Video Question Answering (submitted to TCSVT)_.
 
 
 ## Evaluation
