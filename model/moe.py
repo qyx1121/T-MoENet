@@ -85,7 +85,7 @@ class SparseDispatcher(object):
         self._gates = gates
         self._num_experts = num_experts
         # sort experts
-        sorted_experts, index_sorted_experts = torch.nonzero(gates).sort(0)  # torch.nonzero: 返回非0坐标，按行、列依次排序
+        sorted_experts, index_sorted_experts = torch.nonzero(gates).sort(0)  # torch.nonzero:
         # drop indices
         _, self._expert_index = sorted_experts.split(1, dim=1)
         # get according batch index for each expert
@@ -366,8 +366,8 @@ class MoE(nn.Module):
                 gates = gates.to(x.device)
                 dispatcher = SparseDispatcher(self.num_experts, gates)
             
-                expert_inputs = dispatcher.dispatch(frame_features)  # 获取每个expert的输入
-                gates = dispatcher.expert_to_gates() # 获取
+                expert_inputs = dispatcher.dispatch(frame_features) 
+                gates = dispatcher.expert_to_gates() 
                 expert_outputs = [self.experts[i](expert_inputs[i]) for i in range(self.num_experts)]
                 y = dispatcher.combine(expert_outputs)
             else:
@@ -399,8 +399,8 @@ class MoE(nn.Module):
 
             dispatcher = SparseDispatcher(self.num_experts, gates)
             
-            expert_inputs = dispatcher.dispatch(frame_features)  # 获取每个expert的输入
-            gates = dispatcher.expert_to_gates() # 获取
+            expert_inputs = dispatcher.dispatch(frame_features) 
+            gates = dispatcher.expert_to_gates() 
             expert_outputs = [self.experts[i](expert_inputs[i]) for i in range(self.num_experts)]
             y = dispatcher.combine(expert_outputs)
             return y, loss, load
